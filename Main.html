@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SaveCart - Coupons & Vouchers</title>
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #e6f3fa;
+}
+header {
+  background: #1e88e5;
+  color: white;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+header h1 {
+  margin: 0;
+}
+nav a {
+  color: white;
+  text-decoration: none;
+  margin: 0 15px;
+}
+nav a:hover {
+  text-decoration: underline;
+}
+.container {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 0 20px;
+}
+.filters {
+  margin-bottom: 20px;
+}
+.filters select {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  font-size: 16px;
+}
+.coupon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+.coupon {
+  background: white;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  text-align: center;
+  transition: transform 0.2s;
+}
+.coupon:hover {
+  transform: scale(1.05);
+}
+.coupon h3 {
+  margin: 0 0 10px;
+  color: #1565c0;
+}
+.coupon p {
+  margin: 5px 0;
+  color: #333;
+}
+.secret-code {
+  filter: blur(4px);
+  transition: filter 0.3s;
+  background: #f0f0f0;
+  padding: 5px;
+  border-radius: 5px;
+}
+.secret-code.unblurred {
+  filter: none;
+}
+button {
+  background: #43a047;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+button:hover {
+  background: #388e3c;
+}
+form {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+}
+form label {
+  display: block;
+  margin: 10px 0 5px;
+}
+form input, form select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+#account {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+.hidden {
+  display: none;
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>SaveCart</h1>
+  <nav>
+    <a href="#" onclick="showSection('home')">Home</a>
+    <a href="#" onclick="showSection('sell')">Sell Coupon</a>
+    <a href="#" onclick="showSection('account')">Account</a>
+  </nav>
+</header>
+<div class="container">
+  <section id="home">
+    <h2>Available Coupons</h2>
+    <div class="filters">
+      <label for="category-filter">Filter by Category: </label>
+      <select id="category-filter" onchange="filterCoupons()">
+        <option value="All">All</option>
+        <option value="Food">Food</option>
+        <option value="Shopping">Shopping</option>
+        <option value="Travel">Travel</option>
+        <option value="Entertainment">Entertainment</option>
+      </select>
+    </div>
+    <div id="coupon-grid" class="coupon-grid"></div>
+  </section>
+  <section id="sell" class="hidden">
+    <h2>Sell a Coupon</h2>
+    <form id="coupon-form">
+      <label for="title">Coupon Title</label>
+      <input type="text" id="title" required>
+      <label for="category">Category</label>
+      <select id="category" required>
+        <option value="Food">Food</option>
+        <option value="Shopping">Shopping</option>
+        <option value="Travel">Travel</option>
+        <option value="Entertainment">Entertainment</option>
+      </select>
+      <label for="price">Price (INR)</label>
+      <input type="number" id="price" required>
+      <label for="description">Description</label>
+      <input type="text" id="description" required>
+      <label for="code">Secret Code</label>
+      <input type="text" id="code" required>
+      <button type="submit">Add Coupon</button>
+    </form>
+  </section>
+  <section id="account" class="hidden">
+    <h2>Account</h2>
+    <p>Username: <span id="username">Guest</span></p>
+    <p>Email: <span id="email">guest@example.com</span></p>
+    <p>My Coupons:</p>
+    <div id="user-coupons" class="coupon-grid"></div>
+  </section>
+</div>
+<script>
+const coupons = [
+  { id: 1, title: '50% Off Pizza', category: 'Food', price: 200, description: 'Valid at Pizza Hut', code: 'PIZZA50', seller: 'user1' },
+  { id: 2, title: '20% Off Flipkart', category: 'Shopping', price: 150, description: 'Online shopping discount', code: 'FLIP20', seller: 'user2' },
+  { id: 3, title: 'Free Movie Ticket', category: 'Entertainment', price: 300, description: 'Valid at PVR', code: 'MOVIEFREE', seller: 'user1' },
+  { id: 4, title: '30% Off Burger King', category: 'Food', price: 180, description: 'Valid nationwide', code: 'BK30OFF', seller: 'user3' },
+  { id: 5, title: '₹500 Off Flight', category: 'Travel', price: 250, description: 'Valid on domestic flights', code: 'FLY500', seller: 'user4' },
+  { id: 6, title: '10% Off Amazon', category: 'Shopping', price: 100, description: 'Valid on electronics', code: 'AMZ10', seller: 'user2' },
+  { id: 7, title: '2-for-1 Cinema', category: 'Entertainment', price: 350, description: 'Valid at INOX', code: 'INOX2FOR1', seller: 'user5' },
+  { id: 8, title: '₹200 Off Zomato', category: 'Food', price: 120, description: 'Valid on first order', code: 'ZOM200', seller: 'user1' },
+  { id: 9, title: '15% Off Myntra', category: 'Shopping', price: 140, description: 'Valid on apparel', code: 'MYN15', seller: 'user3' },
+  { id: 10, title: '₹1000 Off Hotel', category: 'Travel', price: 400, description: 'Valid at OYO', code: 'OYO1000', seller: 'user4' },
+  { id: 11, title: '25% Off Dominos', category: 'Food', price: 190, description: 'Valid on large pizzas', code: 'DOM25', seller: 'user2' },
+  { id: 12, title: 'Free Concert Pass', category: 'Entertainment', price: 500, description: 'Valid at local events', code: 'CONCERTFREE', seller: 'user5' },
+  { id: 13, title: '₹300 Off Swiggy', category: 'Food', price: 130, description: 'Valid on all orders', code: 'SWIG300', seller: 'user1' },
+  { id: 14, title: '20% Off Ajio', category: 'Shopping', price: 160, description: 'Valid on footwear', code: 'AJIO20', seller: 'user3' },
+  { id: 15, title: '₹700 Off Train', category: 'Travel', price: 280, description: 'Valid on IRCTC', code: 'TRAIN700', seller: 'user4' },
+  { id: 16, title: 'Buy 1 Get 1 Coffee', category: 'Food', price: 110, description: 'Valid at CCD', code: 'CCD1FOR1', seller: 'user2' },
+  { id: 17, title: '30% Off Netflix', category: 'Entertainment', price: 450, description: 'Valid for 1 month', code: 'NET30', seller: 'user5' },
+  { id: 18, title: '₹400 Off BigBasket', category: 'Shopping', price: 170, description: 'Valid on groceries', code: 'BB400', seller: 'user1' },
+  { id: 19, title: 'Free Bus Ticket', category: 'Travel', price: 320, description: 'Valid on RedBus', code: 'REDBUSFREE', seller: 'user4' },
+  { id: 20, title: '50% Off KFC', category: 'Food', price: 210, description: 'Valid on buckets', code: 'KFC50', seller: 'user3' }
+];
+const user = { username: 'Guest', email: 'guest@example.com', coupons: [] };
+function showSection(sectionId) {
+  document.querySelectorAll('section').forEach(section => section.classList.add('hidden'));
+  document.getElementById(sectionId).classList.remove('hidden');
+}
+function renderCoupons(filteredCoupons = coupons) {
+  const grid = document.getElementById('coupon-grid');
+  grid.innerHTML = '';
+  filteredCoupons.forEach(coupon => {
+    const div = document.createElement('div');
+    div.className = 'coupon';
+    div.innerHTML = `
+      <h3>${coupon.title}</h3>
+      <p>Category: ${coupon.category}</p>
+      <p>Price: ₹${coupon.price}</p>
+      <p>${coupon.description}</p>
+      <p class="secret-code" id="code-${coupon.id}">${coupon.code}</p>
+      <button onclick="buyCoupon(${coupon.id})">Buy Now</button>
+    `;
+    grid.appendChild(div);
+  });
+}
+function renderUserCoupons() {
+  const userGrid = document.getElementById('user-coupons');
+  userGrid.innerHTML = '';
+  user.coupons.forEach(coupon => {
+    const div = document.createElement('div');
+    div.className = 'coupon';
+    div.innerHTML = `
+      <h3>${coupon.title}</h3>
+      <p>Category: ${coupon.category}</p>
+      <p>Price: ₹${coupon.price}</p>
+      <p>${coupon.description}</p>
+      <p>Code: ${coupon.code}</p>
+    `;
+    userGrid.appendChild(div);
+  });
+}
+function buyCoupon(id) {
+  const coupon = coupons.find(c => c.id === id);
+  if (coupon) {
+    user.coupons.push(coupon);
+    document.getElementById(`code-${id}`).classList.add('unblurred');
+    renderUserCoupons();
+    alert(`Purchased ${coupon.title}! Code: ${coupon.code}`);
+  }
+}
+function filterCoupons() {
+  const category = document.getElementById('category-filter').value;
+  const filtered = category === 'All' ? coupons : coupons.filter(c => c.category === category);
+  renderCoupons(filtered);
+}
+document.getElementById('coupon-form').addEventListener('submit', e => {
+  e.preventDefault();
+  const newCoupon = {
+    id: coupons.length + 1,
+    title: document.getElementById('title').value,
+    category: document.getElementById('category').value,
+    price: parseInt(document.getElementById('price').value),
+    description: document.getElementById('description').value,
+    code: document.getElementById('code').value,
+    seller: user.username
+  };
+  coupons.push(newCoupon);
+  user.coupons.push(newCoupon);
+  renderCoupons();
+  renderUserCoupons();
+  e.target.reset();
+  showSection('home');
+});
+document.getElementById('username').textContent = user.username;
+document.getElementById('email').textContent = user.email;
+renderCoupons();
+renderUserCoupons();
+</script>
+</body>
+</html>
