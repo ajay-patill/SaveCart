@@ -45,18 +45,25 @@
             font-weight: 700;
         }
 
-        nav a {
+        nav {
+            display: flex;
+            align-items: center;
+        }
+
+        nav button {
             color: var(--white);
-            text-decoration: none;
+            background: transparent;
+            border: none;
             margin: 0 1.5rem;
             font-size: 1.1rem;
             font-weight: 500;
             padding: 0.6rem 1.2rem;
             border-radius: 8px;
+            cursor: pointer;
             transition: background-color 0.3s ease, transform 0.2s ease;
         }
 
-        nav a:hover {
+        nav button:hover {
             background: var(--accent);
             color: var(--text);
             transform: scale(1.05);
@@ -286,7 +293,7 @@
                 gap: 1rem;
             }
 
-            nav a {
+            nav button {
                 margin: 0.6rem;
             }
 
@@ -314,10 +321,10 @@
     <header>
         <h1>SaveCart</h1>
         <nav>
-            <a href="#" onclick="showSection('home')">Home</a>
-            <a href="#" onclick="showSection('buy')">Buy</a>
-            <a href="#" onclick="showSection('sell')">Sell</a>
-            <a href="#" onclick="showSection('account')">Account</a>
+            <button onclick="showSection('home')">Home</button>
+            <button onclick="showSection('buy')">Buy</button>
+            <button onclick="showSection('sell')">Sell</button>
+            <button onclick="showSection('account')">Account</button>
         </nav>
     </header>
     <div class="container">
